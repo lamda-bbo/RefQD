@@ -1,0 +1,39 @@
+defaults:
+  - root_config
+  - override hydra/job_logging: colorlog
+  - override hydra/hydra_logging: colorlog
+  - _self_
+
+hydra:
+  run:
+    dir: logs/${task.name}/${framework.name}/${emitter.name}/${network.name}/${code}/${run}/${seedstr}
+  sweep:
+    dir: logs
+    subdir: ${task.name}/${framework.name}/${emitter.name}/${network.name}/${code}/${run}/${seedstr}
+  job:
+    chdir: true
+  job_logging:
+    formatters:
+      simple:
+        format: '[%(asctime)s][%(name)s:%(lineno)d][%(levelname)s] %(message)s'
+      colorlog:
+        format: '[%(cyan)s%(asctime)s%(reset)s][%(blue)s%(name)s:%(lineno)d%(reset)s][%(log_color)s%(levelname)s%(reset)s]
+          %(message)s'
+      unrichlog:
+        '()': 'refqd.utils.UnRichFormatter'
+        format: '[%(asctime)s][%(name)s:%(lineno)d][%(levelname)s] %(message)s'
+      richlog:
+        '()': 'refqd.utils.RichFormatter'
+        format: '[%(cyan)s%(asctime)s%(reset)s][%(blue)s%(name)s:%(lineno)d%(reset)s][%(log_color)s%(levelname)s%(reset)s]
+          %(message)s'
+        log_colors:
+          DEBUG: purple
+          INFO: green
+          WARNING: yellow
+          ERROR: red
+          CRITICAL: bold_red
+    handlers:
+      console:
+        formatter: richlog
+      file:
+        formatter: unrichlog
